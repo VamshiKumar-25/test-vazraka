@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <style>
+    .main { fill: #2f3e4f; }
+    .accent { fill: #4f9da6; }
+    @media (prefers-color-scheme: dark) {
+      .main { fill: #f5f7fa; }
+      .accent { fill: #6fd3ff; }
+    }
+  </style>
+  <polygon points="1.2,16 41.2,16 88,120 48,120" class="main" />
+  <polygon points="91,100 163,100 127,180" class="main" />
+  <polygon points="145.5,50 185.5,50 163,100 123,100" class="main" />
+  <polygon points="160.8,16 200.8,16 191.8,36 151.8,36" class="accent" />
+</svg>

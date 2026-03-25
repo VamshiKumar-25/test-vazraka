@@ -1,22 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Lenis from 'lenis';
 
-import CursorGlow from './components/CursorGlow';
 import ScrollProgress from './components/ScrollProgress';
 import Navbar from './components/Navbar';
-import NeuralNetworkBackground from './components/NeuralNetworkBackground';
-import GlowingOrb from './components/GlowingOrb';
 
-import Intro from './components/Intro';
 import Hero from './components/Hero';
 import Innovation from './components/Innovation';
 import ProductsShowcase from './components/ProductsShowcase';
+import Pricing from './components/Pricing';
 import Services from './components/Services';
 import CallToAction from './components/CallToAction';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 
+import { ThemeProvider } from './context/ThemeContext';
+
 function App() {
+  const [prefilledPlan, setPrefilledPlan] = useState(null);
+
+  const handleSelectPlan = (plan) => {
+    setPrefilledPlan(plan);
+    const contactSection = document.getElementById('contact');
+    if (contactSection) {
+      contactSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   useEffect(() => {
     // Smooth scrolling via Lenis
     const lenis = new Lenis({
@@ -37,29 +46,27 @@ function App() {
     }
 
     requestAnimationFrame(raf);
-    
+
     return () => {
       lenis.destroy();
     }
   }, []);
 
   return (
-    <main>
-      <CursorGlow />
-      <ScrollProgress />
-      <Navbar />
-      <NeuralNetworkBackground />
-      <GlowingOrb />
-      
-      <Intro />
-      <Hero />
-      <Innovation />
-      <Services />
-      <ProductsShowcase />
-      <CallToAction />
-      <Contact />
-      <Footer />
-    </main>
+    <ThemeProvider>
+      <main>
+        {/* <ScrollProgress /> */}
+        <Navbar />
+        <Hero />
+        <Innovation />
+        <Services />
+        <ProductsShowcase />
+        <Pricing onSelectPlan={handleSelectPlan} />
+        {/* <CallToAction /> */}
+        <Contact prefilledPlan={prefilledPlan} />
+        <Footer />
+      </main>
+    </ThemeProvider>
   );
 }
 

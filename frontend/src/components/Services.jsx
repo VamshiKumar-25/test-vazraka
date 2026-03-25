@@ -2,107 +2,64 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import { Smartphone, Layout, Cloud, Share2, Video, X, ArrowRight } from 'lucide-react';
 
-// Reusing the futuristic Tilt Card logic from FutureVision
-const TiltCard = ({ service, onClick }) => {
-  const cardRef = useRef(null);
-  const [rotateX, setRotateX] = useState(0);
-  const [rotateY, setRotateY] = useState(0);
+const ServiceCard = ({ service, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseMove = (e) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    // Calculate 3D rotation based on mouse position
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    
-    // Max rotation is 15 degrees
-    const rotateXValue = ((y - centerY) / centerY) * -15;
-    const rotateYValue = ((x - centerX) / centerX) * 15;
-    
-    setRotateX(rotateXValue);
-    setRotateY(rotateYValue);
-  };
-
-  const handleMouseLeave = () => {
-    setIsHovered(false);
-    setRotateX(0);
-    setRotateY(0);
-  };
 
   return (
     <motion.div
-      ref={cardRef}
-      className={`glass-panel service-card ${isHovered ? 'hovered' : ''}`}
-      onMouseMove={handleMouseMove}
+      className="service-card"
       onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={handleMouseLeave}
+      onMouseLeave={() => setIsHovered(false)}
       onClick={() => onClick(service)}
-      animate={{
-        rotateX: rotateX,
-        rotateY: rotateY,
-        z: isHovered ? 50 : 0,
-        y: isHovered ? -10 : 0,
-      }}
-      transition={{ type: "spring", stiffness: 400, damping: 30 }}
       style={{
         padding: '2.5rem',
         cursor: 'pointer',
-        position: 'relative',
-        transformStyle: 'preserve-3d',
         height: '100%',
         width: '100%',
         display: 'flex',
         flexDirection: 'column',
         gap: '1.5rem',
-        border: isHovered ? `1px solid ${service.color}` : '1px solid rgba(255, 255, 255, 0.08)',
-        boxShadow: isHovered ? `0 25px 50px rgba(0,0,0,0.6), inset 0 0 30px ${service.color}33, 0 0 30px ${service.color}66` : 'var(--glass-shadow)',
+        backgroundColor: 'hsl(var(--bg-main))',
+        border: `1px solid hsl(var(--glass-border))`,
+        borderRadius: 'var(--radius-card)',
+        boxShadow: isHovered ? 'var(--glass-shadow)' : '0 4px 6px rgba(0,0,0,0.02)',
+        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+        transition: 'all 0.3s ease'
       }}
     >
-      <motion.div 
-        style={{ 
-          width: '60px', height: '60px', 
-          borderRadius: '16px',
-          background: `linear-gradient(135deg, ${service.color}22, transparent)`,
-          border: `1px solid ${service.color}55`,
+      <div
+        style={{
+          width: '56px', height: '56px',
+          borderRadius: '12px',
+          backgroundColor: 'hsl(var(--bg-secondary))',
           display: 'flex', justifyContent: 'center', alignItems: 'center',
-          color: service.color,
-          transform: 'translateZ(30px)'
-        }}
-        animate={{ 
-          boxShadow: isHovered ? `0 0 20px ${service.color}66` : 'none',
-          y: isHovered ? -5 : 0
+          color: 'hsl(var(--accent-primary))'
         }}
       >
-        <service.icon size={30} />
-      </motion.div>
-      
-      <div style={{ transform: 'translateZ(20px)' }}>
-        <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem', color: '#fff' }}>{service.title}</h3>
-        <p style={{ color: 'hsl(var(--text-secondary))', lineHeight: 1.6 }}>{service.shortDesc}</p>
+        <service.icon size={25} />
       </div>
-      
-      <motion.div 
-        style={{ 
-          marginTop: 'auto', 
-          transform: 'translateZ(40px)',
-          display: 'flex', 
-          alignItems: 'center', 
+
+      <div>
+        <h3 style={{ fontSize: '1.3rem', marginBottom: '0.8rem', color: 'hsl(var(--text-primary))' }}>{service.title}</h3>
+        <p style={{ fontSize: '0.9rem', color: 'hsl(var(--text-secondary))', lineHeight: 1.6 }}>{service.shortDesc}</p>
+      </div>
+
+      <div
+        style={{
+          marginTop: 'auto',
+          display: 'flex',
+          alignItems: 'center',
           gap: '8px',
-          color: service.color,
+          fontSize: '0.9rem',
+          color: 'hsl(var(--accent-primary))',
           fontWeight: 600,
-          opacity: 0.8
-        }}
-        animate={{ 
-          opacity: isHovered ? 1 : 0.6,
-          x: isHovered ? 5 : 0
+          opacity: isHovered ? 1 : 0.7,
+          transform: isHovered ? 'translateX(4px)' : 'translateX(0)',
+          transition: 'all 0.3s ease'
         }}
       >
         Explore Service <ArrowRight size={18} />
-      </motion.div>
+      </div>
     </motion.div>
   );
 };
@@ -158,7 +115,7 @@ export default function Services() {
     },
     {
       id: 'content',
-      title: 'Ready-Made Reels & Content Shoots',
+      title: 'Ready-Made Reels',
       shortDesc: 'Creative media production through The Nexus Media.',
       fullDesc: 'Powered directly by The Nexus Media, we deliver breathtaking visual assets and professional creative media production.',
       capabilities: ['edited reels production', 'professional content shoots', 'brand content creation', 'promotional videos'],
@@ -168,9 +125,9 @@ export default function Services() {
   ];
 
   return (
-    <section id="services" className="section-container" style={{ perspective: '1000px' }}>
+    <section id="services" className="section-container" style={{ backgroundColor: 'hsl(var(--bg-main))' }}>
       <div className="container" style={{ zIndex: 10 }}>
-        
+
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -179,10 +136,10 @@ export default function Services() {
           style={{ textAlign: 'center', marginBottom: '5rem' }}
         >
           <div className="sub-heading" style={{ justifyContent: 'center' }}>Our Capabilities</div>
-          <h2 className="section-title" style={{ fontSize: 'clamp(3rem, 5vw, 4.5rem)' }}>
-            Digital <span className="text-gradient">Services</span>
+          <h2 className="section-title" style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)' }}>
+            Digital Services
           </h2>
-          <p style={{ color: 'hsl(var(--text-secondary))', maxWidth: '600px', margin: '0 auto', fontSize: '1.2rem', lineHeight: 1.6 }}>
+          <p style={{ color: 'hsl(var(--text-secondary))', maxWidth: '600px', margin: '0 auto', fontSize: '1rem', lineHeight: 1.6 }}>
             Engineered solutions bridging the gap between imaginative concepts and cutting-edge reality.
           </p>
         </motion.div>
@@ -193,13 +150,13 @@ export default function Services() {
             {services.slice(0, 2).map((service, index) => (
               <motion.div
                 key={service.id}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 style={{ display: 'flex', width: '100%' }}
               >
-                <TiltCard service={service} onClick={setSelectedService} />
+                <ServiceCard service={service} onClick={setSelectedService} />
               </motion.div>
             ))}
           </div>
@@ -207,13 +164,13 @@ export default function Services() {
             {services.slice(2, 5).map((service, index) => (
               <motion.div
                 key={service.id}
-                initial={{ opacity: 0, y: 50 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.6, delay: (index + 2) * 0.1 }}
                 style={{ display: 'flex', width: '100%' }}
               >
-                <TiltCard service={service} onClick={setSelectedService} />
+                <ServiceCard service={service} onClick={setSelectedService} />
               </motion.div>
             ))}
           </div>
@@ -231,7 +188,7 @@ export default function Services() {
             style={{
               position: 'fixed',
               top: 0, left: 0, right: 0, bottom: 0,
-              backgroundColor: 'rgba(5, 10, 20, 0.8)',
+              backgroundColor: 'rgba(0, 0, 0, 0.65)',
               backdropFilter: 'blur(20px)',
               WebkitBackdropFilter: 'blur(20px)',
               zIndex: 100000,
@@ -243,15 +200,15 @@ export default function Services() {
             onClick={() => setSelectedService(null)}
           >
             <motion.div
-              initial={{ scale: 0.9, y: 50, opacity: 0 }}
+              initial={{ scale: 0.95, y: 20, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
               exit={{ scale: 0.95, y: 20, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              transition={{ ease: "easeOut", duration: 0.2 }}
               style={{
-                background: 'linear-gradient(135deg, rgba(20, 25, 40, 0.9) 0%, rgba(10, 15, 25, 0.95) 100%)',
-                border: `1px solid ${selectedService.color}55`,
-                boxShadow: `0 40px 100px rgba(0,0,0,0.8), inset 0 0 40px ${selectedService.color}11, 0 0 60px ${selectedService.color}33`,
-                borderRadius: '24px',
+                backgroundColor: 'hsl(var(--bg-main))',
+                border: '1px solid hsl(var(--glass-border))',
+                boxShadow: '0 24px 48px rgba(0,0,0,0.15)',
+                borderRadius: '16px',
                 padding: '3rem',
                 maxWidth: '700px',
                 width: '100%',
@@ -261,75 +218,69 @@ export default function Services() {
               }}
               onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside modal
             >
-              <button 
+              <button
                 onClick={() => setSelectedService(null)}
                 style={{
                   position: 'absolute', top: '2rem', right: '2rem',
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.1)',
+                  backgroundColor: 'hsl(var(--bg-secondary))',
+                  border: '1px solid hsl(var(--glass-border))',
                   borderRadius: '50%',
                   width: '40px', height: '40px',
                   display: 'flex', justifyContent: 'center', alignItems: 'center',
-                  color: '#fff', cursor: 'pointer', transition: 'all 0.3s'
+                  color: 'hsl(var(--text-primary))', cursor: 'pointer', transition: 'all 0.2s'
                 }}
-                onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = 'scale(1.1)'; }}
-                onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; e.currentTarget.style.transform = 'scale(1)'; }}
+                onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'hsl(var(--text-secondary))'; e.currentTarget.style.color = '#000'; }}
+                onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'hsl(var(--bg-secondary))'; e.currentTarget.style.color = 'hsl(var(--text-primary))'; }}
               >
                 <X size={20} />
               </button>
 
-              <div style={{ 
-                width: '80px', height: '80px', 
-                borderRadius: '20px',
-                background: `linear-gradient(135deg, ${selectedService.color}22, transparent)`,
-                border: `1px solid ${selectedService.color}88`,
+              <div style={{
+                width: '64px', height: '64px',
+                borderRadius: '12px',
+                backgroundColor: 'hsl(var(--bg-secondary))',
                 display: 'flex', justifyContent: 'center', alignItems: 'center',
-                color: selectedService.color,
+                color: 'hsl(var(--accent-primary))',
                 marginBottom: '2rem',
-                boxShadow: `0 0 30px ${selectedService.color}44`
               }}>
-                <selectedService.icon size={40} />
+                <selectedService.icon size={30} />
               </div>
 
-              <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#fff' }}>{selectedService.title}</h2>
-              <div style={{ height: '3px', width: '60px', background: selectedService.color, marginBottom: '2rem', borderRadius: '2px', boxShadow: `0 0 10px ${selectedService.color}` }} />
-              
-              <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '1.2rem', lineHeight: 1.8, marginBottom: '2rem' }}>
+              <h2 style={{ fontSize: '1.8rem', marginBottom: '1rem', color: 'hsl(var(--text-primary))' }}>{selectedService.title}</h2>
+              <div style={{ height: '4px', width: '60px', backgroundColor: 'hsl(var(--accent-primary))', marginBottom: '2rem', borderRadius: '2px' }} />
+
+              <p style={{ color: 'hsl(var(--text-secondary))', fontSize: '1rem', lineHeight: 1.8, marginBottom: '2rem' }}>
                 {selectedService.fullDesc}
               </p>
 
-              <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '1.5rem' }}>Capabilities:</h3>
-              <ul style={{ 
-                listStyle: 'none', 
-                padding: 0, 
+              <h3 style={{ color: 'hsl(var(--text-primary))', fontSize: '1.2rem', marginBottom: '1.5rem' }}>Capabilities:</h3>
+              <ul style={{
+                listStyle: 'none',
+                padding: 0,
                 marginBottom: '3rem',
                 display: 'grid',
                 gridTemplateColumns: '1fr 1fr',
                 gap: '1rem'
               }}>
                 {selectedService.capabilities.map((cap, i) => (
-                  <li key={i} style={{ 
-                    color: 'hsl(var(--text-secondary))', 
-                    fontSize: '1.1rem',
+                  <li key={i} style={{
+                    color: 'hsl(var(--text-secondary))',
+                    fontSize: '0.9rem',
                     display: 'flex',
                     alignItems: 'center',
-                    gap: '10px'
+                    gap: '12px'
                   }}>
-                    <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: selectedService.color, boxShadow: `0 0 8px ${selectedService.color}` }} />
+                    <div style={{ width: '8px', height: '8px', borderRadius: '2px', backgroundColor: 'hsl(var(--accent-primary))' }} />
                     <span style={{ textTransform: 'capitalize' }}>{cap}</span>
                   </li>
                 ))}
               </ul>
 
-              <a href="#contact" className="btn-primary" 
+              <a href="#contact" className="btn-primary"
                 onClick={() => setSelectedService(null)}
-                style={{ 
-                  background: `linear-gradient(135deg, ${selectedService.color}, ${selectedService.color}88)`,
-                  boxShadow: `0 0 20px ${selectedService.color}66`
-                }}
               >
                 <span>Start a Project</span>
-                <ArrowRight size={20} style={{ marginLeft: '10px', position: 'relative', zIndex: 1 }} />
+                <ArrowRight size={20} style={{ marginLeft: '10px' }} />
               </a>
             </motion.div>
           </motion.div>
